@@ -1,0 +1,14 @@
+.iconBtn {
+  background-color: #f5f6fa;
+  border: none;
+  color: black;
+  &[ant-click-animating-without-extra-node]:after {
+    animation: none !important;
+    //  border-color: transparent !important;
+  }
+  &:hover,
+  &:focus {
+    background-color: #dcdde1;
+    color: inherit;
+  }
+}
