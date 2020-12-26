@@ -4,7 +4,6 @@
   color: black;
   &[ant-click-animating-without-extra-node]:after {
     animation: none !important;
-    //  border-color: transparent !important;
   }
   &:hover,
   &:focus {

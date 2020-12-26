@@ -28,12 +28,24 @@
     }
     .header__search {
       margin-bottom: 10px;
+      display: flex;
+      .ant-input-affix-wrapper {
+        border-radius: 20px;
+        height: 40px;
+        line-height: 40px;
+        background-color: #f5f6fa;
+        border: none;
+        .ant-input {
+          background-color: #f5f6fa;
+        }
+      }
+      .ant-input-affix-wrapper-focused {
+        box-shadow: none;
+      }
     }
   }
   &__content {
     width: 100%;
     flex: 1;
-    background-color: greenyellow;
-    border-top: 1px solid #ccc;
   }
 }

@@ -1,0 +1,26 @@
+.signLayout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  &__intro {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    .ant-typography {
+      margin: 0;
+    }
+  }
+  &__logo {
+    width: 200px;
+    height: auto;
+  }
+  &__form {
+    width: 100%;
+    padding: 10px 30px;
+    @media (min-width: 480px) {
+      width: 360px;
+    }
+  }
+}
