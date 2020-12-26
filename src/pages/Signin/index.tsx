@@ -9,7 +9,7 @@ interface SigninProps {}
 const Signin: React.FC<SigninProps> = ({}) => {
   return (
     <SignLayout text='Sign in with email to get started.'>
-      <Form name='signin' initialValues={{ remember: true }}>
+      <Form name='signin' initialValues={{ remember: true }} className='signin'>
         <Form.Item
           name='email'
           rules={[

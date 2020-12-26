@@ -12,13 +12,13 @@ interface SignLayoutProps {
 const SignLayout: React.FC<SignLayoutProps> = ({ text, children }) => {
   return (
     <div className='signLayout'>
-      <Space direction='vertical' className='signin__intro'>
-        <img src='/images/logo.jpg' alt='logo' className='signin__logo' />
+      <Space direction='vertical' className='signLayout__intro'>
+        <img src='/images/logo.jpg' alt='logo' className='signLayout__logo' />
         <Title level={2}>Messenger</Title>
         <Text>{text}</Text>
       </Space>
-      <div className='signin__form'>{children}</div>
-      <div className='signin__footer'>Created by Crazybirdz @2021</div>
+      <div className='signLayout__form'>{children}</div>
+      <div className='signLayout__footer'>Created by Crazybirdz @2021</div>
     </div>
   );
 };

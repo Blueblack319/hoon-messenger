@@ -1,8 +1,10 @@
 import React from 'react';
-import { Form, Input, Tooltip } from 'antd';
+import { Form, Input, Tooltip, Button } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
+import './Signup.scss';
 import SignLayout from '@hoc/SignLayout';
+import AvatarUpload from '@components/AvatarUpload';
 
 const formItemLayout = {
   labelCol: {
@@ -10,7 +12,7 @@ const formItemLayout = {
       span: 24,
     },
     sm: {
-      span: 8,
+      span: 6,
     },
   },
   wrapperCol: {
@@ -18,7 +20,7 @@ const formItemLayout = {
       span: 24,
     },
     sm: {
-      span: 16,
+      span: 18,
     },
   },
 };
@@ -29,8 +31,8 @@ const tailFormItemLayout = {
       offset: 0,
     },
     sm: {
-      span: 16,
-      offset: 8,
+      span: 18,
+      offset: 6,
     },
   },
 };
@@ -42,15 +44,12 @@ const Signup: React.FC<SignupProps> = ({}) => {
     console.log(1);
   };
   return (
-    <SignLayout text='Sign up'>
+    <SignLayout text='Create an Account!'>
       <Form
         {...formItemLayout}
-        name='register'
+        className='signup'
+        name='signup'
         onFinish={onFinish}
-        initialValues={{
-          residence: ['zhejiang', 'hangzhou', 'xihu'],
-          prefix: '86',
-        }}
         scrollToFirstError>
         <Form.Item
           name='email'
@@ -124,6 +123,38 @@ const Signup: React.FC<SignupProps> = ({}) => {
             },
           ]}>
           <Input />
+        </Form.Item>
+        <Form.Item
+          name='firstName'
+          label='First Name'
+          rules={[
+            {
+              required: true,
+              message: 'Please input your first name!',
+              whitespace: true,
+            },
+          ]}>
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name='lastName'
+          label='Last Name'
+          rules={[
+            {
+              required: true,
+              message: 'Please input your last name!',
+              whitespace: true,
+            },
+          ]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name='avatar' label='Avatar'>
+          <AvatarUpload />
+        </Form.Item>
+        <Form.Item {...tailFormItemLayout}>
+          <Button type='primary' htmlType='submit'>
+            Register
+          </Button>
         </Form.Item>
       </Form>
     </SignLayout>
