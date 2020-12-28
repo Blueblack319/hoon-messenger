@@ -2,15 +2,15 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Dispatch } from 'react';
 import Cookies from 'js-cookie';
 
-import { signinType, signupType } from '@utils/types';
+import { signinType, signupType, userType } from '@utils/types';
 import { authService, firebaseInstance } from './firebase';
-import { createUser } from './db';
+import { createUser, getAvatarUrl } from './db';
 import { RootState } from 'src/store';
 
 interface stateType {
   isLoading?: boolean;
   error?: null | string;
-  user?: null | object;
+  user?: null | userType;
 }
 
 // Slice
@@ -136,7 +136,8 @@ export const signinWithEmail = (values: signinType) => async (
       values.email,
       values.password,
     );
-    const user = await formatUser(res.user);
+    const photoURL = await getAvatarUrl(res.user!.uid);
+    const user = await formatUser({ ...res.user, photoURL });
     const { token } = user;
     Cookies.set('token', token, { expires: 1 });
 

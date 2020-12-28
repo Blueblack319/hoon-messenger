@@ -21,19 +21,8 @@ import { getAvatarUrl } from '@lib/db';
 
 const Sidebar: React.FC<RouteComponentProps> = ({ history }) => {
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const dispatch = useDispatch();
-  const user: any = useSelector(authSelector.user);
-
-  const settingAvatar = async (uid: string) => {
-    const avatarUrl = await getAvatarUrl(uid);
-    setAvatarUrl(avatarUrl);
-  };
-
-  if (avatarUrl === null && user !== null) {
-    settingAvatar(user.uid);
-    console.log('111111');
-  }
+  const user = useSelector(authSelector.user);
 
   return (
     <div className='sidebar'>
@@ -44,7 +33,7 @@ const Sidebar: React.FC<RouteComponentProps> = ({ history }) => {
               size='large'
               icon={<UserOutlined />}
               className='top__left__avatar'
-              src={avatarUrl}
+              src={user?.avatarUrl}
             />
             Chatting
           </div>

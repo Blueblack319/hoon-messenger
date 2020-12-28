@@ -4,7 +4,7 @@ import { Form, Input, Checkbox, Button } from 'antd';
 import './Signin.scss';
 import SignLayout from '@hoc/SignLayout';
 import { useDispatch, useSelector } from 'react-redux';
-import { authSelector, signinWithEmail } from '@lib/auth';
+import { authSelector, signinWithEmail, signinWithFacebook } from '@lib/auth';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { signinType } from '@utils/types';
 
@@ -23,6 +23,14 @@ const Signin: React.FC<RouteComponentProps> = ({ history }) => {
   if (user !== null) {
     return <Redirect to='/' />;
   }
+  const handleFacebookOnClick = async () => {
+    try {
+      await dispatch(signinWithFacebook());
+      history.push('/');
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  };
   return (
     <SignLayout text='Sign in with email to get started.'>
       <Form
@@ -46,7 +54,10 @@ const Signin: React.FC<RouteComponentProps> = ({ history }) => {
           <Checkbox>Remember me</Checkbox>
         </Form.Item>
 
-        <Button type='primary' htmlType='submit' style={{ width: '100%' }}>
+        <Button
+          type='primary'
+          style={{ width: '100%', marginBottom: '15px' }}
+          onClick={handleFacebookOnClick}>
           Continue with Facebook
         </Button>
 
