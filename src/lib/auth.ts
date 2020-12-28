@@ -1,7 +1,8 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Dispatch } from 'react';
+import Cookies from 'js-cookie';
 
-import { signinType, userType } from '@utils/types';
+import { signinType, signupType } from '@utils/types';
 import { authService } from './firebase';
 import { createUser } from './db';
 import { RootState } from 'src/store';
@@ -97,7 +98,7 @@ const formatUser = async (user: any) => {
   };
 };
 
-export const signupWithEmail = (values: userType) => async (
+export const signupWithEmail = (values: signupType) => async (
   dispatch: Dispatch<PayloadAction | PayloadAction<stateType>>,
 ) => {
   try {
@@ -115,6 +116,7 @@ export const signupWithEmail = (values: userType) => async (
       photoURL: values.avatarUrl,
     });
     const { token, ...userWithoutToken } = user;
+    Cookies.set('token', token, { expires: 1 });
 
     // create user @ db
     await createUser(userWithoutToken, user.uid);
@@ -135,8 +137,8 @@ export const signinWithEmail = (values: signinType) => async (
       values.password,
     );
     const user = await formatUser(res.user);
-    const { token, ...userWithoutToken } = user;
-    console.log(user);
+    const { token } = user;
+    Cookies.set('token', token, { expires: 1 });
 
     dispatch(signinSuccess({ user }));
   } catch (err) {
@@ -148,6 +150,7 @@ export const signout = () => async (dispatch: Dispatch<PayloadAction>) => {
   try {
     dispatch(authStart());
     await authService.signOut();
+    Cookies.remove('token');
     dispatch(signoutSuccess());
   } catch (err) {
     throw new Error(err.message);

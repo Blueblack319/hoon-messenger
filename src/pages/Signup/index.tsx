@@ -11,7 +11,7 @@ import {
 } from '@utils/customFormItemLayout';
 import { signupWithEmail } from '@lib/auth';
 import { useDispatch } from 'react-redux';
-import { userType } from '@utils/types';
+import { signupType } from '@utils/types';
 
 const toBase64 = (file: Blob) =>
   new Promise((resolve, reject) => {
@@ -31,7 +31,7 @@ const Signup: React.FC<RouteComponentProps> = ({ history }) => {
     setAvatarUrl(base64 as string);
   };
 
-  const onFinish = async (values: userType) => {
+  const onFinish = async (values: signupType) => {
     try {
       dispatch(signupWithEmail({ ...values, avatarUrl }));
       history.push('/');

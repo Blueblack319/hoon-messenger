@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Avatar, Input, Space } from 'antd';
 import {
   UserOutlined,
@@ -13,13 +13,27 @@ import {
 import './Sidebar.scss';
 import IconBtn from '@components/IconBtn';
 import { signout } from '@lib/auth';
+import { authSelector } from '@lib/auth';
+import { getAvatarUrl } from '@lib/db';
 // Search bar
+// Get and show avatar
 // TODO: content -> 임의의 data를 넣어서 layout 확인
-// TODO:
 
 const Sidebar: React.FC<RouteComponentProps> = ({ history }) => {
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const dispatch = useDispatch();
+  const user: any = useSelector(authSelector.user);
+
+  const settingAvatar = async (uid: string) => {
+    const avatarUrl = await getAvatarUrl(uid);
+    setAvatarUrl(avatarUrl);
+  };
+
+  if (avatarUrl === null && user !== null) {
+    settingAvatar(user.uid);
+    console.log('111111');
+  }
 
   return (
     <div className='sidebar'>
@@ -30,6 +44,7 @@ const Sidebar: React.FC<RouteComponentProps> = ({ history }) => {
               size='large'
               icon={<UserOutlined />}
               className='top__left__avatar'
+              src={avatarUrl}
             />
             Chatting
           </div>

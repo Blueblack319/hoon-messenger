@@ -54,6 +54,7 @@
     ]
   },
   "devDependencies": {
+    "@types/js-cookie": "^2.2.6",
     "react-app-rewired": "^2.1.8"
   }
 }
