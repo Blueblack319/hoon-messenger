@@ -3,13 +3,14 @@ import { Form, Input, Checkbox, Button } from 'antd';
 
 import './Signin.scss';
 import SignLayout from '@hoc/SignLayout';
-import { useDispatch } from 'react-redux';
-import { signinWithEmail } from '@lib/auth';
-import { RouteComponentProps } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { authSelector, signinWithEmail } from '@lib/auth';
+import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { signinType } from '@utils/types';
 
 const Signin: React.FC<RouteComponentProps> = ({ history }) => {
   const dispatch = useDispatch();
+  const user = useSelector(authSelector.user);
   const onFinish = async (values: signinType) => {
     try {
       await dispatch(signinWithEmail(values));
@@ -18,6 +19,10 @@ const Signin: React.FC<RouteComponentProps> = ({ history }) => {
       throw new Error(err.message);
     }
   };
+
+  if (user !== null) {
+    return <Redirect to='/' />;
+  }
   return (
     <SignLayout text='Sign in with email to get started.'>
       <Form
@@ -40,11 +45,11 @@ const Signin: React.FC<RouteComponentProps> = ({ history }) => {
         <Form.Item name='remember' valuePropName='checked'>
           <Checkbox>Remember me</Checkbox>
         </Form.Item>
-        <Form.Item>
-          <Button type='primary' htmlType='submit' style={{ width: '100%' }}>
-            Continue with Facebook
-          </Button>
-        </Form.Item>
+
+        <Button type='primary' htmlType='submit' style={{ width: '100%' }}>
+          Continue with Facebook
+        </Button>
+
         <Form.Item>
           <Button
             type='primary'

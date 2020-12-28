@@ -3,7 +3,7 @@ import { Dispatch } from 'react';
 import Cookies from 'js-cookie';
 
 import { signinType, signupType } from '@utils/types';
-import { authService } from './firebase';
+import { authService, firebaseInstance } from './firebase';
 import { createUser } from './db';
 import { RootState } from 'src/store';
 
@@ -152,6 +152,24 @@ export const signout = () => async (dispatch: Dispatch<PayloadAction>) => {
     await authService.signOut();
     Cookies.remove('token');
     dispatch(signoutSuccess());
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+export const signinWithFacebook = () => async (
+  dispatch: Dispatch<PayloadAction | PayloadAction<stateType>>,
+) => {
+  try {
+    dispatch(authStart());
+    const res = await authService.signInWithPopup(
+      new firebaseInstance.auth.FacebookAuthProvider(),
+    );
+    const user = await formatUser(res.user);
+    const { token, ...userWithoutToken } = user;
+    await createUser(userWithoutToken, user.uid);
+    Cookies.set('token', token, { expires: 1 });
+    dispatch(signinSuccess({ user }));
   } catch (err) {
     throw new Error(err.message);
   }
