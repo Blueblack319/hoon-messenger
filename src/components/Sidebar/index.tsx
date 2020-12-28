@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Avatar, Input, Space, Card } from 'antd';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Avatar, Input, Space } from 'antd';
 import {
   UserOutlined,
   EllipsisOutlined,
@@ -10,14 +12,14 @@ import {
 
 import './Sidebar.scss';
 import IconBtn from '@components/IconBtn';
+import { signout } from '@lib/auth';
 // Search bar
 // TODO: content -> 임의의 data를 넣어서 layout 확인
 // TODO:
 
-interface sidebarProps {}
-
-const Sidebar: React.FC<sidebarProps> = ({}) => {
+const Sidebar: React.FC<RouteComponentProps> = ({ history }) => {
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
+  const dispatch = useDispatch();
 
   return (
     <div className='sidebar'>
@@ -32,8 +34,16 @@ const Sidebar: React.FC<sidebarProps> = ({}) => {
             Chatting
           </div>
           <div className='top__right'>
-            <IconBtn icon={<EllipsisOutlined style={{ fontSize: '23px' }} />} />
-            <IconBtn icon={<FormOutlined />} />
+            <IconBtn
+              icon={<EllipsisOutlined style={{ fontSize: '23px' }} />}
+              onClick={() => dispatch(signout())}
+            />
+            <IconBtn
+              icon={<FormOutlined />}
+              onClick={() => {
+                history.push('/signin');
+              }}
+            />
           </div>
         </div>
         <div className='header__search'>
@@ -57,4 +67,4 @@ const Sidebar: React.FC<sidebarProps> = ({}) => {
   );
 };
 
-export default Sidebar;
+export default withRouter(Sidebar);

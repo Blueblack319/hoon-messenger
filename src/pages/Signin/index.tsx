@@ -3,13 +3,28 @@ import { Form, Input, Checkbox, Button } from 'antd';
 
 import './Signin.scss';
 import SignLayout from '@hoc/SignLayout';
+import { useDispatch } from 'react-redux';
+import { signinWithEmail } from '@lib/auth';
+import { RouteComponentProps } from 'react-router-dom';
+import { signinType } from '@utils/types';
 
-interface SigninProps {}
-
-const Signin: React.FC<SigninProps> = ({}) => {
+const Signin: React.FC<RouteComponentProps> = ({ history }) => {
+  const dispatch = useDispatch();
+  const onFinish = async (values: signinType) => {
+    try {
+      await dispatch(signinWithEmail(values));
+      history.push('/');
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  };
   return (
     <SignLayout text='Sign in with email to get started.'>
-      <Form name='signin' initialValues={{ remember: true }} className='signin'>
+      <Form
+        name='signin'
+        initialValues={{ remember: true }}
+        className='signin'
+        onFinish={onFinish}>
         <Form.Item
           name='email'
           rules={[

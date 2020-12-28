@@ -1,48 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 import { Form, Input, Tooltip, Button } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 import './Signup.scss';
 import SignLayout from '@hoc/SignLayout';
-import AvatarUpload from '@components/AvatarUpload';
+import {
+  formItemLayout,
+  tailFormItemLayout,
+} from '@utils/customFormItemLayout';
+import { signupWithEmail } from '@lib/auth';
+import { useDispatch } from 'react-redux';
+import { userType } from '@utils/types';
 
-const formItemLayout = {
-  labelCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 6,
-    },
-  },
-  wrapperCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 18,
-    },
-  },
-};
-const tailFormItemLayout = {
-  wrapperCol: {
-    xs: {
-      span: 24,
-      offset: 0,
-    },
-    sm: {
-      span: 18,
-      offset: 6,
-    },
-  },
-};
+const toBase64 = (file: Blob) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (err) => reject(err);
+  });
 
-interface SignupProps {}
+const Signup: React.FC<RouteComponentProps> = ({ history }) => {
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
+  const dispatch = useDispatch();
 
-const Signup: React.FC<SignupProps> = ({}) => {
-  const onFinish = () => {
-    console.log(1);
+  const handleFileOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files![0];
+    const base64 = await toBase64(file);
+    setAvatarUrl(base64 as string);
   };
+
+  const onFinish = async (values: userType) => {
+    try {
+      dispatch(signupWithEmail({ ...values, avatarUrl }));
+      history.push('/');
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  };
+
   return (
     <SignLayout text='Create an Account!'>
       <Form
@@ -75,6 +72,14 @@ const Signup: React.FC<SignupProps> = ({}) => {
               required: true,
               message: 'Please input your password!',
             },
+            {
+              min: 6,
+              message: 'Password should be at least 6 characters',
+            },
+            {
+              max: 20,
+              message: 'Password should be less than 20 characters',
+            },
           ]}
           hasFeedback>
           <Input.Password />
@@ -106,7 +111,7 @@ const Signup: React.FC<SignupProps> = ({}) => {
         </Form.Item>
 
         <Form.Item
-          name='nickname'
+          name='displayName'
           label={
             <span>
               Nickname&nbsp;
@@ -148,12 +153,12 @@ const Signup: React.FC<SignupProps> = ({}) => {
           ]}>
           <Input />
         </Form.Item>
-        <Form.Item name='avatar' label='Avatar'>
-          <AvatarUpload />
+        <Form.Item name='avatarUrl' label='Avatar'>
+          <Input type='file' onChange={handleFileOnChange} />
         </Form.Item>
         <Form.Item {...tailFormItemLayout}>
           <Button type='primary' htmlType='submit'>
-            Register
+            Sign up
           </Button>
         </Form.Item>
       </Form>
