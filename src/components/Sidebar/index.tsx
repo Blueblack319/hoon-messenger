@@ -14,7 +14,9 @@ import './Sidebar.scss';
 import IconBtn from '@components/IconBtn';
 import { signout } from '@lib/auth';
 import { authSelector } from '@lib/auth';
-import { getAvatarUrl } from '@lib/db';
+import { userType } from '@utils/types';
+import algoliaIndex from '@utils/algoliaIndex';
+import UserCard from '@components/UserCard';
 // Search bar
 // Get and show avatar
 // TODO: content -> 임의의 data를 넣어서 layout 확인
@@ -23,8 +25,19 @@ const { Text, Title } = Typography;
 
 const Sidebar: React.FC<RouteComponentProps> = ({ history }) => {
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
+  const [users, setUsers] = useState<Array<userType>>([]);
   const dispatch = useDispatch();
   const user = useSelector(authSelector.user);
+
+  const handleSearchOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === '' || undefined || null) {
+      setUsers([]);
+    } else {
+      algoliaIndex.search(e.target.value).then(({ hits }) => {
+        setUsers(hits as any);
+      });
+    }
+  };
 
   return (
     <div className='sidebar'>
@@ -63,26 +76,15 @@ const Sidebar: React.FC<RouteComponentProps> = ({ history }) => {
             }
             onFocus={() => setIsSearchFocused(true)}
             onBlur={() => setIsSearchFocused(false)}
+            onChange={handleSearchOnChange}
           />
         </div>
       </div>
       <div className='sidebar__content'>
         <Space direction='vertical'>
-          <div className='sidebar__userCard'>
-            <div className='sidebar__avatar'>
-              <Avatar size='large' icon={<UserOutlined />} />
-            </div>
-            <Space
-              direction='vertical'
-              className='userCard__container'
-              size={0}>
-              <Space className='userCard__top'>
-                <Title level={4}>Name</Title>
-                <Text className='userCard__createdAt'>Created At</Text>
-              </Space>
-              <Text>content</Text>
-            </Space>
-          </div>
+          {users.map((user) => (
+            <UserCard user={user} />
+          ))}
         </Space>
       </div>
     </div>

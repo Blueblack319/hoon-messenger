@@ -19,7 +19,7 @@ export interface userType {
   name: string | null;
   firstName: string | null;
   lastName: string | null;
-  token: string | null;
+  token?: string | null;
   provider: string | null;
   avatarUrl: string | null;
 }

@@ -19,3 +19,11 @@ export const getAvatarUrl = async (uid: string) => {
     throw new Error(err.message);
   }
 };
+
+export const getUser = async (word: string) => {
+  try {
+    // const res = await dbService.collection('users').doc()
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
