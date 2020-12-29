@@ -6,6 +6,7 @@ import {
   InfoCircleFilled,
   PlusCircleFilled,
   SmileFilled,
+  LikeFilled,
 } from '@ant-design/icons';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
@@ -15,6 +16,7 @@ import { useSelector } from 'react-redux';
 import { authSelector } from '@lib/auth';
 import { userType } from '@utils/types';
 import { getUser } from '@lib/db';
+import IconBtnBlue from '@components/IconBtnBlue';
 
 const { Title } = Typography;
 
@@ -31,6 +33,7 @@ const Messenger: React.FC<RouteComponentProps<MatchParams>> = ({ match }) => {
       setCounterpart(user);
     }
     getCounterpart(match.params.uid);
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -45,27 +48,32 @@ const Messenger: React.FC<RouteComponentProps<MatchParams>> = ({ match }) => {
             <Title level={4}>{counterpart?.name}</Title>
           </div>
           <div className='header__right'>
-            <Button shape='circle' icon={<PhoneFilled />} />
-            <Button shape='circle' icon={<VideoCameraFilled />} />
-            <Button shape='circle' icon={<InfoCircleFilled />} />
+            <IconBtnBlue icon={<PhoneFilled style={{ fontSize: '20px' }} />} />
+            <IconBtnBlue
+              icon={<VideoCameraFilled style={{ fontSize: '20px' }} />}
+            />
+            <IconBtnBlue
+              icon={<InfoCircleFilled style={{ fontSize: '20px' }} />}
+            />
           </div>
         </div>
         <div className='messenger__content'>content</div>
         <div className='messenger__footer'>
           <div className='footer__left'>
-            <Button
-              shape='circle'
+            <IconBtnBlue
               icon={<PlusCircleFilled style={{ fontSize: '20px' }} />}
-              size='large'
             />
           </div>
-          <div className='footer__right'>
+          <div className='footer__center'>
             <Input
               placeholder='Aa'
               suffix={
                 <SmileFilled style={{ fontSize: '18px', color: '#1890ff' }} />
               }
             />
+          </div>
+          <div className='footer__right'>
+            <IconBtnBlue icon={<LikeFilled style={{ fontSize: '20px' }} />} />
           </div>
         </div>
       </div>
