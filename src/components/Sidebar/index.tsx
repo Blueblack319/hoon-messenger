@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Avatar, Input, Space, Typography } from 'antd';
+import { Avatar, Input, Space } from 'antd';
 import {
   UserOutlined,
   EllipsisOutlined,
@@ -21,8 +21,6 @@ import UserCard from '@components/UserCard';
 // Get and show avatar
 // TODO: content -> 임의의 data를 넣어서 layout 확인
 
-const { Text, Title } = Typography;
-
 const Sidebar: React.FC<RouteComponentProps> = ({ history }) => {
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   const [users, setUsers] = useState<Array<userType>>([]);
@@ -34,7 +32,8 @@ const Sidebar: React.FC<RouteComponentProps> = ({ history }) => {
       setUsers([]);
     } else {
       algoliaIndex.search(e.target.value).then(({ hits }) => {
-        setUsers(hits as any);
+        const usersWithoutMe = hits.filter((hit) => hit.objectID !== user?.uid);
+        setUsers(usersWithoutMe as any);
       });
     }
   };
@@ -83,7 +82,7 @@ const Sidebar: React.FC<RouteComponentProps> = ({ history }) => {
       <div className='sidebar__content'>
         <Space direction='vertical'>
           {users.map((user) => (
-            <UserCard user={user} />
+            <UserCard user={user} key={user.uid} />
           ))}
         </Space>
       </div>
