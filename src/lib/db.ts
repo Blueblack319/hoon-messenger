@@ -13,16 +13,17 @@ export const createUser = async (data: any, uid: string) => {
 
 export const getAvatarUrl = async (uid: string) => {
   try {
-    const res = await dbService.collection('users').doc(uid).get();
-    return res.data()!.avatarUrl;
+    const user = await dbService.collection('users').doc(uid).get();
+    return user.data()!.avatarUrl;
   } catch (err) {
     throw new Error(err.message);
   }
 };
 
-export const getUser = async (word: string) => {
+export const getUser = async (uid: string) => {
   try {
-    // const res = await dbService.collection('users').doc()
+    const user = await dbService.collection('users').doc(uid).get();
+    return user.data();
   } catch (err) {
     throw new Error(err.message);
   }

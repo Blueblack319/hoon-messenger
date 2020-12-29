@@ -4,16 +4,19 @@ import { UserOutlined } from '@ant-design/icons';
 
 import './UserCard.scss';
 import { userType } from '@utils/types';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
-interface UserCardProps {
+interface UserCardProps extends RouteComponentProps {
   user: userType;
 }
 
-const UserCard: React.FC<UserCardProps> = ({ user }) => {
+const UserCard: React.FC<UserCardProps> = ({ user, history }) => {
   return (
-    <div className='userCard'>
+    <div
+      className='userCard'
+      onClick={() => history.push(`/messenger/${user.uid}`)}>
       <div className='userCard__avatar'>
         <Avatar size='large' icon={<UserOutlined />} />
       </div>
@@ -22,10 +25,10 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
           <Title level={4}>{user.name}</Title>
           <Text className='userCard__createdAt'>Created At</Text>
         </Space>
-        <Text>content</Text>
+        <Text className='userCard__content'>content</Text>
       </Space>
     </div>
   );
 };
 
-export default UserCard;
+export default withRouter(UserCard);

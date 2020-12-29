@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 
 import { signinType, signupType, userType } from '@utils/types';
 import { authService, firebaseInstance } from './firebase';
-import { createUser, getAvatarUrl } from './db';
+import { createUser, getUser } from './db';
 import { RootState } from 'src/store';
 
 interface stateType {
@@ -136,9 +136,8 @@ export const signinWithEmail = (values: signinType) => async (
       values.email,
       values.password,
     );
-    const photoURL = await getAvatarUrl(res.user!.uid);
-    const user = await formatUser({ ...res.user, photoURL });
-    const { token } = user;
+    const user = (await getUser(res.user!.uid)) as userType;
+    const { token } = await formatUser({ ...res.user });
     Cookies.set('token', token, { expires: 1 });
 
     dispatch(signinSuccess({ user }));

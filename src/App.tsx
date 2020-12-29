@@ -9,6 +9,7 @@ import {
 import Main from '@pages/Main';
 import Signin from '@pages/Signin';
 import Signup from '@pages/Signup';
+import Messenger from '@pages/Messenger';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route exact path='/' component={Main} />
         <Route path='/signin' component={Signin} />
         <Route path='/signup' component={Signup} />
+        <Route path='/messenger/:uid' component={Messenger} />
         <Redirect to='/' />
       </Switch>
     </Router>

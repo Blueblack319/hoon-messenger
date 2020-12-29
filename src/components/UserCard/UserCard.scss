@@ -9,6 +9,8 @@
   }
   &__container {
     width: 100%;
+    height: 100%;
+    justify-content: center;
     margin-left: 10px;
     border-top: 1px solid #f1f2f6;
     border-bottom: 1px solid #f1f2f6;
@@ -16,9 +18,13 @@
   &__top {
     justify-content: space-between;
     align-items: center;
+    height: 30px;
   }
   &__createdAt {
     color: grey;
     font-weight: 600;
+  }
+  &__content {
+    font-weight: 500;
   }
 }
