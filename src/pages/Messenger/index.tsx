@@ -14,14 +14,22 @@ import './Messenger.scss';
 import Sidebar from '@components/Sidebar';
 import { useSelector } from 'react-redux';
 import { authSelector } from '@lib/auth';
+import { dbService } from '@lib/firebase';
 import { userType } from '@utils/types';
-import { createMessenger, getUser, getMessages } from '@lib/db';
+import {
+  createMessenger,
+  getUser,
+  getMessenger,
+  listenMessenger,
+} from '@lib/db';
 import IconBtnBlue from '@components/IconBtnBlue';
 
 // default content
-// TODO: create messenger
-// TODO: push message
+// create messengerId
+// push message
 // TODO: set onSnapshot
+// TODO: Counterpart Message UI
+// TODO: User Message UI
 // TODO: check onSnapshot
 // TODO: get message
 // TODO: message UI
@@ -41,33 +49,40 @@ type messageType = {
 
 const Messenger: React.FC<RouteComponentProps<MatchParams>> = ({ match }) => {
   const [counterpart, setCounterpart] = useState<null | userType>(null);
-  const [haveMessenger, setHaveMessenger] = useState<boolean>(false);
   const [inputVal, setInputVal] = useState<string>('');
+  const [messengerId, setMessengerId] = useState<null | string>(null);
   const [messages, setMessages] = useState<null | messageType[]>(null);
   const user = useSelector(authSelector.user);
+
   useEffect(() => {
     async function getCounterpart(uid1: string, uid2: string) {
       const user = (await getUser(uid2)) as userType;
-      const messages = await getMessages(uid1, uid2);
-
-      if (messages) {
-        setHaveMessenger(true);
-      }
+      const messengerId = await getMessenger(uid1, uid2);
 
       setCounterpart(user);
-      setMessages(messages);
+      setMessengerId(messengerId);
     }
     getCounterpart(user?.uid!, match.params.uid);
     // eslint-disable-next-line
   }, []);
 
+  useEffect(() => {
+    if (messengerId) {
+      dbService
+        .collection('messengers')
+        .doc(messengerId!)
+        .onSnapshot((doc) => {
+          setMessages(doc.data()!.messages);
+        });
+    }
+  });
+
   const handleEnter = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      if (haveMessenger === false) {
+      if (messengerId === null) {
         await createMessenger(user?.uid!, match.params.uid, inputVal);
-        const messages = await getMessages(user?.uid!, match.params.uid);
-        setMessages(messages);
-        setHaveMessenger(true);
+        const messengerId = await getMessenger(user?.uid!, match.params.uid);
+        setMessengerId(messengerId);
       } else {
       }
       setInputVal('');
@@ -101,7 +116,7 @@ const Messenger: React.FC<RouteComponentProps<MatchParams>> = ({ match }) => {
         </div>
         <div className='messenger__content'>
           <div className='content__default'>
-            {!haveMessenger ? (
+            {!messengerId ? (
               <>
                 {' '}
                 <Avatar src={counterpart?.avatarUrl} size={60} />

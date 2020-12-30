@@ -62,19 +62,29 @@ export const createMessenger = async (
   }
 };
 
-export const getMessages = async (uid1: string, uid2: string) => {
+export const getMessenger = async (uid1: string, uid2: string) => {
   try {
-    const messages = await dbService
+    const messenger = await dbService
       .collection('messengers')
       .where('users', '==', [uid1, uid2])
       .get()
-      .then((querySnapshot) => {
-        return querySnapshot.docs[0].data().messages;
-      })
-      .catch((err) => {
-        return null;
+      .then((querySnapshot) => querySnapshot.docs[0]?.id);
+    return messenger;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+export const listenMessenger = async (messengerId: string | null) => {
+  try {
+    const messages = await dbService
+      .collection('messengers')
+      .doc(messengerId!)
+      .onSnapshot((doc) => {
+        // console.log(doc.data()!.messages);
+        return doc.data()!.messages;
       });
-    return messages;
+    console.log(messages.call);
   } catch (err) {
     throw new Error(err.message);
   }
