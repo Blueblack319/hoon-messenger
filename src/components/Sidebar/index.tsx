@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { Avatar, Input, Space, Popover, Button } from 'antd';
+import { useSelector } from 'react-redux';
+import { Avatar, Input, Space } from 'antd';
 import {
   UserOutlined,
-  EllipsisOutlined,
   FormOutlined,
   SearchOutlined,
   ArrowLeftOutlined,
@@ -12,14 +11,13 @@ import {
 
 import './Sidebar.scss';
 import IconBtn from '@components/IconBtn';
-import { signout } from '@lib/auth';
 import { authSelector } from '@lib/auth';
 import { userType } from '@utils/types';
 import algoliaIndex from '@utils/algoliaIndex';
 import UserCard from '@components/UserCard';
 import AuthBtn from '@components/AuthBtn';
 
-const Sidebar: React.FC<RouteComponentProps> = ({ history }) => {
+const Sidebar: React.FC<RouteComponentProps> = () => {
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   const [users, setUsers] = useState<Array<userType>>([]);
 

@@ -6,9 +6,7 @@ import './Main.scss';
 
 const { Title } = Typography;
 
-interface HomeProps {}
-
-const Main: React.FC<HomeProps> = ({}) => {
+const Main = () => {
   return (
     <CustomLayout>
       <div className='main'>
