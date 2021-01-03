@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Typography, Button, Input } from 'antd';
+import { Avatar, Typography, Input } from 'antd';
 import {
   PhoneFilled,
   VideoCameraFilled,
@@ -8,7 +8,7 @@ import {
   SmileFilled,
   LikeFilled,
 } from '@ant-design/icons';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { RouteComponentProps, withRouter, Redirect } from 'react-router-dom';
 
 import './Messenger.scss';
 import Sidebar from '@components/Sidebar';
@@ -16,24 +16,10 @@ import { useSelector } from 'react-redux';
 import { authSelector } from '@lib/auth';
 import { dbService } from '@lib/firebase';
 import { userType } from '@utils/types';
-import {
-  createMessenger,
-  getUser,
-  getMessenger,
-  listenMessenger,
-} from '@lib/db';
+import { createMessenger, getUser, getMessengerId, addMessage } from '@lib/db';
 import IconBtnBlue from '@components/IconBtnBlue';
-
-// default content
-// create messengerId
-// push message
-// TODO: set onSnapshot
-// TODO: Counterpart Message UI
-// TODO: User Message UI
-// TODO: check onSnapshot
-// TODO: get message
-// TODO: message UI
-// TODO: check working well(2 users)
+import UserMessage from './UserMessage';
+import CounterpartMessage from './CounterpartMessage';
 
 const { Title } = Typography;
 
@@ -57,33 +43,49 @@ const Messenger: React.FC<RouteComponentProps<MatchParams>> = ({ match }) => {
   useEffect(() => {
     async function getCounterpart(uid1: string, uid2: string) {
       const user = (await getUser(uid2)) as userType;
-      const messengerId = await getMessenger(uid1, uid2);
-
+      const messengerId = await getMessengerId(uid1, uid2);
       setCounterpart(user);
-      setMessengerId(messengerId);
+      setMessengerId(messengerId!);
     }
-    getCounterpart(user?.uid!, match.params.uid);
-    // eslint-disable-next-line
-  }, []);
+    if (user !== null) {
+      getCounterpart(user?.uid!, match.params.uid);
+    }
+  }, [match.params.uid, user?.uid, user]);
 
   useEffect(() => {
     if (messengerId) {
+      // console.log는 실행되지 않는데 왜 messages는 update되는 거지??
+      console.log(messengerId);
       dbService
         .collection('messengers')
         .doc(messengerId!)
         .onSnapshot((doc) => {
-          setMessages(doc.data()!.messages);
+          const messages = doc
+            .data()!
+            .messages.sort(
+              (a: any, b: any) =>
+                new Date(a.createdAt).getTime() -
+                new Date(b.createdAt).getTime(),
+            );
+          setMessages(messages);
         });
     }
-  });
+  }, [messengerId]);
 
   const handleEnter = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       if (messengerId === null) {
         await createMessenger(user?.uid!, match.params.uid, inputVal);
-        const messengerId = await getMessenger(user?.uid!, match.params.uid);
-        setMessengerId(messengerId);
+        const messengerId = await getMessengerId(user?.uid!, match.params.uid);
+        setMessengerId(messengerId!);
       } else {
+        console.log('messengerId is not null');
+        await addMessage(
+          user?.uid!,
+          e.currentTarget.value,
+          new Date().toISOString(),
+          messengerId,
+        );
       }
       setInputVal('');
     }
@@ -92,6 +94,10 @@ const Messenger: React.FC<RouteComponentProps<MatchParams>> = ({ match }) => {
   const handleInputOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputVal(e.target.value);
   };
+
+  if (user === null) {
+    return <Redirect to='/' />;
+  }
 
   return (
     <div className='messengerLayout'>
@@ -115,23 +121,40 @@ const Messenger: React.FC<RouteComponentProps<MatchParams>> = ({ match }) => {
           </div>
         </div>
         <div className='messenger__content'>
-          <div className='content__default'>
-            {!messengerId ? (
-              <>
-                {' '}
-                <Avatar src={counterpart?.avatarUrl} size={60} />
-                <Title level={3}>{counterpart?.name}</Title>{' '}
-              </>
-            ) : (
-              messages?.map((message) => {
+          {!messengerId ? (
+            <div className='content__default'>
+              {' '}
+              <Avatar src={counterpart?.avatarUrl} size={60} />
+              <Title level={3}>{counterpart?.name}</Title>{' '}
+            </div>
+          ) : (
+            <div className='messenger__messages'>
+              {messages?.map((message, index, arr) => {
                 if (message.uid === user?.uid) {
-                  return <div key={message.createdAt}>user text</div>;
+                  return (
+                    <UserMessage
+                      key={message.createdAt}
+                      text={message.text}
+                      createdAt={message.createdAt}
+                    />
+                  );
                 } else {
-                  return <div key={message.createdAt}>counterpart texts</div>;
+                  let avatarUrl = null;
+                  if (arr[index - 1]?.uid !== counterpart?.uid) {
+                    avatarUrl = counterpart?.avatarUrl;
+                  }
+                  return (
+                    <CounterpartMessage
+                      key={message.createdAt}
+                      text={message.text}
+                      createdAt={message.createdAt}
+                      avatarUrl={avatarUrl}
+                    />
+                  );
                 }
-              })
-            )}
-          </div>
+              })}
+            </div>
+          )}
         </div>
         <div className='messenger__footer'>
           <div className='footer__left'>

@@ -62,29 +62,43 @@ export const createMessenger = async (
   }
 };
 
-export const getMessenger = async (uid1: string, uid2: string) => {
+const getMessengerIdByUid = async (uid1: string, uid2: string) => {
+  let id;
+  const messenger = await dbService
+    .collection('messengers')
+    .where('users', '==', [uid1, uid2])
+    .get();
+  messenger.docs.forEach((doc) => (id = doc.id));
+  return id;
+};
+
+export const getMessengerId = async (uid1: string, uid2: string) => {
   try {
-    const messenger = await dbService
-      .collection('messengers')
-      .where('users', '==', [uid1, uid2])
-      .get()
-      .then((querySnapshot) => querySnapshot.docs[0]?.id);
-    return messenger;
+    let id = await getMessengerIdByUid(uid1, uid2);
+    if (id === undefined) {
+      id = await getMessengerIdByUid(uid2, uid1);
+    }
+    return id;
   } catch (err) {
     throw new Error(err.message);
   }
 };
 
-export const listenMessenger = async (messengerId: string | null) => {
+export const addMessage = (
+  uid: string,
+  text: string,
+  createdAt: string,
+  messengerId: string,
+) => {
   try {
-    const messages = await dbService
-      .collection('messengers')
-      .doc(messengerId!)
-      .onSnapshot((doc) => {
-        // console.log(doc.data()!.messages);
-        return doc.data()!.messages;
-      });
-    console.log(messages.call);
+    const messengerRef = dbService.collection('messengers').doc(messengerId);
+    messengerRef.update({
+      messages: firebaseInstance.firestore.FieldValue.arrayUnion({
+        uid,
+        text,
+        createdAt,
+      }),
+    });
   } catch (err) {
     throw new Error(err.message);
   }

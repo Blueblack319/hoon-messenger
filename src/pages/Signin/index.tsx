@@ -28,7 +28,12 @@ const Signin: React.FC<RouteComponentProps> = ({ history }) => {
       await dispatch(signinWithFacebook());
       history.push('/');
     } catch (err) {
-      throw new Error(err.message);
+      if (
+        err.message !==
+        'The popup has been closed by the user before finalizing the operation.'
+      ) {
+        throw new Error(err.message);
+      }
     }
   };
   return (

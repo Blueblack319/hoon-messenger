@@ -1,0 +1,17 @@
+.userMessage {
+  display: flex;
+  align-self: flex-end;
+  margin-right: 10px;
+  margin-bottom: 7px;
+  &__time {
+    align-self: flex-end;
+    margin-right: 5px;
+    margin-bottom: 3px;
+  }
+  &__textBox {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    border-top-right-radius: 0;
+  }
+}
