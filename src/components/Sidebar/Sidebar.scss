@@ -21,9 +21,9 @@
         }
       }
       .top__right {
-        width: 85px;
         display: flex;
         justify-content: space-between;
+        align-items: center;
       }
     }
     .header__search {
@@ -49,6 +49,19 @@
     flex: 1;
     .ant-space {
       width: 100%;
+    }
+  }
+  &__btn {
+    background-color: #f5f6fa;
+    border: none;
+    color: black;
+    &[ant-click-animating-without-extra-node]:after {
+      animation: none !important;
+    }
+    &:hover,
+    &:focus {
+      background-color: #dcdde1;
+      color: inherit;
     }
   }
 }

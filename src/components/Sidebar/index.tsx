@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Avatar, Input, Space } from 'antd';
+import { Avatar, Input, Space, Popover, Button } from 'antd';
 import {
   UserOutlined,
   EllipsisOutlined,
@@ -17,14 +17,12 @@ import { authSelector } from '@lib/auth';
 import { userType } from '@utils/types';
 import algoliaIndex from '@utils/algoliaIndex';
 import UserCard from '@components/UserCard';
-// Search bar
-// Get and show avatar
-// TODO: content -> 임의의 data를 넣어서 layout 확인
+import AuthBtn from '@components/AuthBtn';
 
 const Sidebar: React.FC<RouteComponentProps> = ({ history }) => {
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   const [users, setUsers] = useState<Array<userType>>([]);
-  const dispatch = useDispatch();
+
   const user = useSelector(authSelector.user);
 
   const handleSearchOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,16 +50,8 @@ const Sidebar: React.FC<RouteComponentProps> = ({ history }) => {
             Chatting
           </div>
           <div className='top__right'>
-            <IconBtn
-              icon={<EllipsisOutlined style={{ fontSize: '23px' }} />}
-              onClick={() => dispatch(signout())}
-            />
-            <IconBtn
-              icon={<FormOutlined />}
-              onClick={() => {
-                history.push('/signin');
-              }}
-            />
+            <AuthBtn user={user} />
+            <IconBtn icon={<FormOutlined />} />
           </div>
         </div>
         <div className='header__search'>

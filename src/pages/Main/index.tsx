@@ -4,8 +4,6 @@ import { Typography } from 'antd';
 import CustomLayout from '@hoc/CustomLayout';
 import './Main.scss';
 
-// TODO:
-
 const { Title } = Typography;
 
 interface HomeProps {}

@@ -1,0 +1,17 @@
+.authBtn {
+  background-color: #f5f6fa;
+  border: none;
+  color: black;
+  height: 100%;
+  padding: 10px;
+  margin-right: 10px;
+  border-radius: 10px;
+  &[ant-click-animating-without-extra-node]:after {
+    animation: none !important;
+  }
+  &:hover,
+  &:focus {
+    background-color: #dcdde1;
+    color: inherit;
+  }
+}
