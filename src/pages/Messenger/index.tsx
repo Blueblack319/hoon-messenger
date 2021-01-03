@@ -60,13 +60,17 @@ const Messenger: React.FC<RouteComponentProps<MatchParams>> = ({ match }) => {
         .collection('messengers')
         .doc(messengerId!)
         .onSnapshot((doc) => {
-          const messages = doc
-            .data()!
-            .messages.sort(
+          let messages;
+          const data = doc.data();
+          if (data?.messages) {
+            messages = data.messages.sort(
               (a: any, b: any) =>
                 new Date(a.createdAt).getTime() -
                 new Date(b.createdAt).getTime(),
             );
+          } else {
+            messages = [];
+          }
           setMessages(messages);
         });
     }
@@ -74,12 +78,11 @@ const Messenger: React.FC<RouteComponentProps<MatchParams>> = ({ match }) => {
 
   const handleEnter = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      if (messengerId === null) {
+      if (!messengerId) {
         await createMessenger(user?.uid!, match.params.uid, inputVal);
         const messengerId = await getMessengerId(user?.uid!, match.params.uid);
         setMessengerId(messengerId!);
       } else {
-        console.log('messengerId is not null');
         await addMessage(
           user?.uid!,
           e.currentTarget.value,
